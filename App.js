@@ -1,5 +1,6 @@
-import Chat from './components/Chat';
+
 import Start from './components/Start';
+import Chat from './components/Chat';
 
 
 import { NavigationContainer } from '@react-navigation/native';
