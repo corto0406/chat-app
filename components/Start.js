@@ -1,122 +1,130 @@
-import React, { useState } from "react";
-import { View, TextInput, TouchableOpacity, Text, StyleSheet, Alert } from "react-native";
-import { getAuth, signInAnonymously } from "firebase/auth";
+import { useState } from 'react';
+import { StyleSheet, View, Text, TextInput, ImageBackground, TouchableOpacity, Alert } from 'react-native';
+import { getAuth, signInAnonymously } from 'firebase/auth';
 
-const Start = ({ navigation }) => {
+const StartScreen = ({ navigation }) => {
   const auth = getAuth();
-  const [user, setUser] = useState("");
-  const [selectedBackgroundColor, setSelectedBackgroundColor] = useState("#757083");
+
+  const [name, setName] = useState("");
+  const [backgroundColor, setBackgroundColor] = useState("");
 
   const signInUser = () => {
     signInAnonymously(auth)
-      .then((result) => {
-        if (result.user) {
-          navigation.navigate("Chat", {
-            userID: result.user.uid,
-            user: user,
-            background: selectedBackgroundColor,
-          });
-          Alert.alert("Signed In Successfully!");
-        } else {
-          Alert.alert("Authentication failed.");
-        }
+      .then(result => {
+        navigation.navigate('ChatScreen', { userID: result.user.uid, name: name, backgroundColor: backgroundColor });
+        Alert.alert('Signed in Successfully');
       })
       .catch((error) => {
-        Alert.alert("Unable to sign in, try again later.");
-      });
+        Alert.alert('Unable to sign in, please try again later');
+      })
   };
 
-  const handleBackgroundChange = (color) => {
-    setSelectedBackgroundColor(color);
+  const handleColorChange = (style) => {
+    const color = StyleSheet.flatten(style).backgroundColor;
+    setBackgroundColor(color);
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Chat App</Text>
-      <View style={styles.formInput}>
+      {/* ImageBackground source is commented out, you can add the correct path when needed */}
+      {/* <ImageBackground source={require('../../assets/Purple-Background-Image.jpg')} resizeMode="cover" style={styles.image}> */}
+      <View style={styles.screenOneContainer}>
         <TextInput
           style={styles.textInput}
-          value={user}
-          placeholder="Your Username"
-          onChangeText={setUser}
+          value={name}
+          onChangeText={setName}
+          placeholder='Your Name'
         />
-
-        <View style={styles.backgroundColorButtonWrapper}>
-          <Text style={styles.chooseBackgroundColor}>Choose Background Color</Text>
-          <View style={styles.backgroundColorButtonsOnly}>
-            <TouchableOpacity
-              style={[styles.backgroundColorButton, { backgroundColor: "#090C08" }]}
-              onPress={() => handleBackgroundChange("#090C08")}
-            ></TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.backgroundColorButton, { backgroundColor: "#474056" }]}
-              onPress={() => handleBackgroundChange("#474056")}
-            ></TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.backgroundColorButton, { backgroundColor: "#8A95A5" }]}
-              onPress={() => handleBackgroundChange("#8A95A5")}
-            ></TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.backgroundColorButton, { backgroundColor: "#B9C6AE" }]}
-              onPress={() => handleBackgroundChange("#B9C6AE")}
-            ></TouchableOpacity>
-          </View>
+        <Text style={styles.buttonText}>Choose Background Color:</Text>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.buttonOne} onPress={() => { handleColorChange(styles.buttonOne) }}></TouchableOpacity>
+          <TouchableOpacity style={styles.buttonTwo} onPress={() => { handleColorChange(styles.buttonTwo) }}></TouchableOpacity>
+          <TouchableOpacity style={styles.buttonThree} onPress={() => { handleColorChange(styles.buttonThree) }}></TouchableOpacity>
+          <TouchableOpacity style={styles.buttonFour} onPress={() => { handleColorChange(styles.buttonFour) }}></TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.enterButton} onPress={signInUser}>
-          <Text style={styles.buttonText}>Enter chat</Text>
+        <TouchableOpacity style={styles.chattingButton} onPress={signInUser}>
+          <Text style={styles.chattingText}>Start Chatting</Text>
         </TouchableOpacity>
       </View>
+      {/* </ImageBackground> */}
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  heading: {
-    fontSize: 25,
-    fontWeight: "bold",
-    marginBottom: 20,
-  },
-  formInput: {
-    width: "80%",
+    justifyContent: 'center',
   },
   textInput: {
-    borderColor: "gray",
+    width: '88%',
+    padding: 15,
     borderWidth: 1,
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 20,
+    marginTop: 15,
+    marginBottom: 30,
+    backgroundColor: "white",
   },
-  backgroundColorButtonWrapper: {
-    marginBottom: 20,
+  // The 'image' style is omitted since the ImageBackground source is commented out
+  screenOneContainer: {
+    backgroundColor: "white",
+    alignItems: 'center',
+    margin: 30,
+    height: '44%',
+    width: '88%',
+    borderRadius: 15,
   },
-  chooseBackgroundColor: {
-    fontSize: 16,
-    marginBottom: 10,
+  buttonOne: {
+    backgroundColor: "#090C08",
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    margin: 5,
   },
-  backgroundColorButtonsOnly: {
-    flexDirection: "row",
+  buttonTwo: {
+    backgroundColor: "#474056",
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    margin: 5,
   },
-  backgroundColorButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    marginRight: 10,
+  buttonThree: {
+    backgroundColor: "#8A95A5",
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    margin: 5,
   },
-  enterButton: {
-    backgroundColor: "#757083",
-    padding: 10,
-    borderRadius: 5,
+  buttonFour: {
+    backgroundColor: "#B9C6AE",
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    margin: 5,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    flex: 1,
+    position: 'relative',
   },
   buttonText: {
-    color: "white",
-    textAlign: "center",
-    fontWeight: "bold",
+    fontSize: 16,
+    fontWeight: '300',
+    color: '#757083',
+    opacity: 50,
+    margin: 10,
+  },
+  chattingButton: {
+    backgroundColor: '#757083',
+    width: '88%',
+    height: 50,
+    marginBottom: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  chattingText: {
+    fontSize: 16,
+    color: '#FFFFFF',
   },
 });
 
-export default Start;
+export default StartScreen;
